@@ -1,0 +1,25 @@
+body {
+    font-family: "Courier New", monospace;
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    background: #222;
+    color: white;
+    padding: 10px;
+}
+
+button {
+    background: #ff4500;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #ff6347;
+}
