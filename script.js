@@ -6,34 +6,48 @@ const HEADERS = {
     "X-Master-Key": API_KEY
 };
 
-// Function to Get JSON Data
+// Function to Fetch Data from JSONBin
 async function fetchData() {
-    let response = await fetch(BIN_URL, { method: "GET", headers: HEADERS });
-    let data = await response.json();
-    return data.record;
+    try {
+        let response = await fetch(BIN_URL, { method: "GET", headers: HEADERS });
+        let data = await response.json();
+        return data.record;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return { users: [] }; 
+    }
 }
 
-// Function to Update JSON Data
+// Function to Update Data in JSONBin
 async function updateData(newData) {
-    await fetch(BIN_URL, {
-        method: "PUT",
-        headers: HEADERS,
-        body: JSON.stringify(newData)
-    });
+    try {
+        await fetch(BIN_URL, {
+            method: "PUT",
+            headers: HEADERS,
+            body: JSON.stringify(newData)
+        });
+    } catch (error) {
+        console.error("Error updating data:", error);
+    }
 }
 
 // Sign-Up Function
 async function signUp(event) {
     event.preventDefault();
 
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
+    let username = document.getElementById("username").value.trim();
+    let password = document.getElementById("password").value.trim();
+
+    if (!username || !password) {
+        alert("Please enter both username and password!");
+        return;
+    }
 
     let data = await fetchData();
     let users = data.users || [];
 
     if (users.some(user => user.username === username)) {
-        alert("Username already taken!");
+        alert("Username already exists!");
         return;
     }
 
@@ -49,13 +63,13 @@ async function signUp(event) {
 async function login(event) {
     event.preventDefault();
 
-    let username = document.getElementById("login-username").value;
-    let password = document.getElementById("login-password").value;
+    let username = document.getElementById("login-username").value.trim();
+    let password = document.getElementById("login-password").value.trim();
 
     let data = await fetchData();
     let users = data.users || [];
 
-    let user = users.find(user => user.username === username && user.password === password);
+    let user = users.find(u => u.username === username && u.password === password);
 
     if (user) {
         localStorage.setItem("loggedInUser", username);
@@ -71,23 +85,21 @@ async function loadDashboard() {
     if (!user) return (window.location.href = "index.html");
 
     document.getElementById("user-name").textContent = user;
+    
     let data = await fetchData();
     let users = data.users || [];
     let currentUser = users.find(u => u.username === user);
 
     let studyList = document.getElementById("study-list");
     studyList.innerHTML = "";
-    currentUser.plans.forEach(plan => {
-        let li = document.createElement("li");
-        li.textContent = `${plan.subject} at ${plan.time}`;
-        studyList.appendChild(li);
-    });
-
-    // Update Navbar for Logged-in User
-    document.getElementById("signup-link").style.display = "none";
-    let userDisplay = document.getElementById("username-display");
-    userDisplay.textContent = user;
-    userDisplay.style.display = "inline";
+    
+    if (currentUser && currentUser.plans.length > 0) {
+        currentUser.plans.forEach(plan => {
+            let li = document.createElement("li");
+            li.textContent = `${plan.subject} at ${plan.time}`;
+            studyList.appendChild(li);
+        });
+    }
 }
 
 // Add Study Plan
@@ -95,13 +107,29 @@ async function addStudyPlan(event) {
     event.preventDefault();
 
     let user = localStorage.getItem("loggedInUser");
-    let subject = document.getElementById("subject").value;
-    let time = document.getElementById("time").value;
+    if (!user) {
+        alert("Please log in first!");
+        return;
+    }
+
+    let subject = document.getElementById("subject").value.trim();
+    let time = document.getElementById("time").value.trim();
+
+    if (!subject || !time) {
+        alert("Please fill in both fields!");
+        return;
+    }
 
     let data = await fetchData();
     let users = data.users || [];
     let currentUser = users.find(u => u.username === user);
 
+    if (!currentUser) {
+        alert("User not found!");
+        return;
+    }
+
+    // Push new plan
     currentUser.plans.push({ subject, time });
 
     await updateData({ users });
@@ -110,7 +138,7 @@ async function addStudyPlan(event) {
     loadDashboard();
 }
 
-// Logout
+// Logout Function
 function logout() {
     localStorage.removeItem("loggedInUser");
     window.location.href = "index.html";
