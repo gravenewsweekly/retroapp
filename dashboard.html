@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Study Buddy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <h1>Dashboard 📖</h1>
+        <button id="logout-btn">Logout</button>
+    </nav>
+
+    <h2>Welcome, <span id="user-name"></span>!</h2>
+
+    <h3>Create Study Plan</h3>
+    <form id="study-form">
+        <input type="text" id="subject" placeholder="Subject" required>
+        <input type="text" id="time" placeholder="Study Time (e.g., 6 PM)" required>
+        <button type="submit">Add Plan</button>
+    </form>
+
+    <h3>Your Study Plans</h3>
+    <ul id="study-list"></ul>
+
+    <script src="script.js"></script>
+</body>
+</html>
