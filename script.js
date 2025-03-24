@@ -1,4 +1,4 @@
-const API_KEY = "$2a$10$9lovVKvnl4Bu3l2cw0/.6Osl604XMjJ14bPtG3EHFU8OUAOdhwJ0C"; 
+const API_KEY = "$2a$10$6RrSskLQt79gkiMayiH5h.24DUr/9pagYETgtlfPZL7iJEaE4WEC6"; 
 const BIN_ID = "67e05b9c8960c979a576ffae"; 
 const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 const HEADERS = {
